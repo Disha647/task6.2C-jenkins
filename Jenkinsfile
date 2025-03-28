@@ -1,95 +1,95 @@
 pipeline {
     agent any
     environment {
-        EMAIL = 'disha.chawla6025@gmail.com'
+        RECIPIENT_EMAIL = 'disha.chawla6025@gmail.com'
     }
 
     stages {
-        stage('Build') {
+        stage('Compile & Build') {
             steps {
-                echo 'Building the application... npm and maven can be used for Building...'
+                echo 'Initializing build process... Utilizing npm and Maven where necessary.'
             }
         }
 
-        stage('Unit and Integration Tests') {
+        stage('Testing: Unit & Integration') {
             steps {
-                echo 'Running unit and integration tests... For testing, JUnit can be used'
+                echo 'Executing unit and integration tests... JUnit is an option for testing.'
             }
             post {
                 success {
                     emailext(
-                        subject: "Unit Tests Passed",
-                        body: "Unit tests completed successfully!!!.",
-                        to: "${EMAIL}"
+                        subject: "Unit Tests Successful",
+                        body: "All unit tests passed successfully! 🎉",
+                        to: "${RECIPIENT_EMAIL}"
                     )
                 }
                 failure {
                     emailext(
                         subject: "Unit Tests Failed",
-                        body: "Unit tests failed. Check Jenkins logs.",
-                        to: "${EMAIL}"
+                        body: "Unit tests encountered errors. Review the Jenkins logs for details.",
+                        to: "${RECIPIENT_EMAIL}"
                     )
                 }
                 always {
                     emailext(
-                        subject: "Build Completed: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                        body: "Check console output at ${env.BUILD_URL} to view the results.",
+                        subject: "Build Report: ${env.JOB_NAME} - #${env.BUILD_NUMBER}",
+                        body: "Check the full output at: ${env.BUILD_URL}",
                         to: 'disha.chawla6025@gmail.com'
                     )
                 }
             }
         }
 
-        stage('Code Analysis') {
+        stage('Static Code Review') {
             steps {
-                echo 'Performing code analysis... ESLint can be used for code analysis'
+                echo 'Running static analysis... ESLint can assist with code quality checks.'
             }
         }
 
-        stage('Security Scan') {
+        stage('Security Audit') {
             steps {
-                echo 'Performing security scan... Bandit can be used for security scan'
+                echo 'Performing security assessment... Bandit can assist in scanning vulnerabilities.'
             }
             post {
                 success {
                     emailext(
                         subject: "Security Scan Passed",
-                        body: "Security scan completed successfully.",
-                        to: "${EMAIL}"
+                        body: "No security threats detected. All checks passed.",
+                        to: "${RECIPIENT_EMAIL}"
                     )
                 }
                 failure {
                     emailext(
-                        subject: "Security Scan Failed",
-                        body: "Security vulnerabilities found. Check Jenkins logs.",
-                        to: "${EMAIL}"
+                        subject: "⚠Security Scan Failed",
+                        body: "Potential vulnerabilities detected. Review the logs for further investigation.",
+                        to: "${RECIPIENT_EMAIL}"
                     )
                 }
             }
         }
 
-        stage('Deploy to Staging') {
+        stage('Staging Deployment') {
             steps {
-                echo 'Deploying to staging environment... AWS, Docker can be used in Deploy'
+                echo 'Deploying application to the staging environment... AWS and Docker may be utilized.'
             }
         }
 
-        stage('Integration Tests on Staging') {
+        stage('Validation on Staging') {
             steps {
-                echo 'Running integration tests on staging... Cypress can be used for integration'
+                echo 'Running integration tests on staging... Cypress is a possible tool for this.'
             }
         }
 
-        stage('Deploy to Production') {
+        stage('Production Rollout') {
             steps {
-                echo 'Deploying to production environment... Heroku could be used for this deployment'
+                echo 'Deploying the final build to production... Heroku could facilitate deployment.'
             }
         }
     }
 
     post {
         always {
-            echo 'Pipeline execution completed.'
+            echo 'CI/CD pipeline execution finished.'
         }
     }
 }
