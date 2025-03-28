@@ -1,62 +1,88 @@
 pipeline {
     agent any
+    environment {
+        EMAIL = 'disha.chawla6025@gmail.com'
+    }
 
     stages {
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/Disha647/task6.2C-jenkins.git'
-            }
-        }
-
         stage('Build') {
             steps {
-                echo 'Building the application... npm and Maven can be used for Building...'
-                bat 'echo Build step running on Windows'
-                // Replace this with your actual build command, e.g.,
-                // bat 'mvn clean install' (for Maven)
-                // bat 'npm install && npm run build' (for Node.js)
+                echo 'Building the application... npm and maven can be used for Building...'
             }
         }
 
         stage('Unit and Integration Tests') {
             steps {
-                bat 'echo Running unit and integration tests...'
-                // Replace with actual test command, e.g., bat 'mvn test'
+                echo 'Running unit and integration tests... For testing, JUnit can be used'
+            }
+            post {
+                success {
+                    emailext(
+                        subject: "Unit Tests Passed",
+                        body: "Unit tests completed successfully!!!.",
+                        to: "${EMAIL}"
+                    )
+                }
+                failure {
+                    emailext(
+                        subject: "Unit Tests Failed",
+                        body: "Unit tests failed. Check Jenkins logs.",
+                        to: "${EMAIL}"
+                    )
+                }
+                always {
+                    emailext(
+                        subject: "Build Completed: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                        body: "Check console output at ${env.BUILD_URL} to view the results.",
+                        to: 'disha.chawla6025@gmail.com'
+                    )
+                }
             }
         }
 
         stage('Code Analysis') {
             steps {
-                bat 'echo Performing code analysis...'
-                // Add relevant analysis commands here
+                echo 'Performing code analysis... ESLint can be used for code analysis'
             }
         }
 
         stage('Security Scan') {
             steps {
-                bat 'echo Running security scans...'
-                // Add security scan commands
+                echo 'Performing security scan... Bandit can be used for security scan'
+            }
+            post {
+                success {
+                    emailext(
+                        subject: "Security Scan Passed",
+                        body: "Security scan completed successfully.",
+                        to: "${EMAIL}"
+                    )
+                }
+                failure {
+                    emailext(
+                        subject: "Security Scan Failed",
+                        body: "Security vulnerabilities found. Check Jenkins logs.",
+                        to: "${EMAIL}"
+                    )
+                }
             }
         }
 
         stage('Deploy to Staging') {
             steps {
-                bat 'echo Deploying to staging environment...'
-                // Add deployment steps here
+                echo 'Deploying to staging environment... AWS, Docker can be used in Deploy'
             }
         }
 
         stage('Integration Tests on Staging') {
             steps {
-                bat 'echo Running integration tests on staging...'
-                // Add integration test steps
+                echo 'Running integration tests on staging... Cypress can be used for integration'
             }
         }
 
         stage('Deploy to Production') {
             steps {
-                bat 'echo Deploying to production environment...'
-                // Add production deployment steps
+                echo 'Deploying to production environment... Heroku could be used for this deployment'
             }
         }
     }
@@ -64,11 +90,6 @@ pipeline {
     post {
         always {
             echo 'Pipeline execution completed.'
-            emailext(
-                to: 'disha.chawla6025@gmail.com',
-                subject: 'Jenkins Build Notification',
-                body: 'The Jenkins build has completed. Check the pipeline for details.'
-            )
         }
     }
 }
