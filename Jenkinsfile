@@ -19,7 +19,7 @@ pipeline {
                 success {
                     emailext(
                         subject: "Unit Tests Successful",
-                        body: "All unit tests passed successfully! 🎉",
+                        body: "All unit tests passed successfully!",
                         to: "${RECIPIENT_EMAIL}"
                     )
                 }
@@ -60,7 +60,7 @@ pipeline {
                 }
                 failure {
                     emailext(
-                        subject: "⚠Security Scan Failed",
+                        subject: "Security Scan Failed",
                         body: "Potential vulnerabilities detected. Review the logs for further investigation.",
                         to: "${RECIPIENT_EMAIL}"
                     )
