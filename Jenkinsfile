@@ -1,97 +1,62 @@
 pipeline {
     agent any
 
-    environment {
-        EMAIL = 'disha.chawla6025@gmail.com'
-    }
-
     stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/Disha647/task6.2C-jenkins.git'
+            }
+        }
+
         stage('Build') {
             steps {
                 echo 'Building the application... npm and Maven can be used for Building...'
-                sh 'npm install && npm run build'  // If using Node.js
-                sh 'mvn clean package'  // If using Java
+                bat 'echo Build step running on Windows'
+                // Replace this with your actual build command, e.g.,
+                // bat 'mvn clean install' (for Maven)
+                // bat 'npm install && npm run build' (for Node.js)
             }
         }
 
         stage('Unit and Integration Tests') {
             steps {
-                echo 'Running unit and integration tests... JUnit can be used for testing.'
-                sh 'mvn test'  // If using JUnit for Java
-            }
-            post {
-                success {
-                    emailext(
-                        subject: "Unit Tests Passed",
-                        body: "Unit tests completed successfully!!!",
-                        to: "${EMAIL}"
-                    )
-                }
-                failure {
-                    emailext(
-                        subject: "Unit Tests Failed",
-                        body: "Unit tests failed. Check Jenkins logs.",
-                        to: "${EMAIL}"
-                    )
-                }
-                always {
-                    emailext(
-                        subject: "Build Completed: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                        body: "Check console output at ${env.BUILD_URL} to view the results.",
-                        to: "${EMAIL}"
-                    )
-                }
+                bat 'echo Running unit and integration tests...'
+                // Replace with actual test command, e.g., bat 'mvn test'
             }
         }
 
         stage('Code Analysis') {
             steps {
-                echo 'Performing code analysis... SonarQube can be used for code analysis.'
-                sh 'mvn sonar:sonar'  // Replace with actual SonarQube command
+                bat 'echo Performing code analysis...'
+                // Add relevant analysis commands here
             }
         }
 
         stage('Security Scan') {
             steps {
-                echo 'Performing security scan... OWASP Dependency-Check can be used for security scan.'
-                sh 'dependency-check --project myProject --scan .'  // Replace with security scan command
-            }
-            post {
-                success {
-                    emailext(
-                        subject: "Security Scan Passed",
-                        body: "Security scan completed successfully.",
-                        to: "${EMAIL}"
-                    )
-                }
-                failure {
-                    emailext(
-                        subject: "Security Scan Failed",
-                        body: "Security vulnerabilities found. Check Jenkins logs.",
-                        to: "${EMAIL}"
-                    )
-                }
+                bat 'echo Running security scans...'
+                // Add security scan commands
             }
         }
 
         stage('Deploy to Staging') {
             steps {
-                echo 'Deploying to staging environment... AWS, Docker can be used in Deployment.'
-                sh './deploy_to_staging.sh'  // Replace with actual deployment script
+                bat 'echo Deploying to staging environment...'
+                // Add deployment steps here
             }
         }
 
         stage('Integration Tests on Staging') {
             steps {
-                echo 'Running integration tests on staging... Cypress can be used for integration tests.'
-                sh 'npx cypress run'  // If using Cypress
+                bat 'echo Running integration tests on staging...'
+                // Add integration test steps
             }
         }
 
         stage('Deploy to Production') {
             steps {
-                echo 'Deploying to production environment... Heroku could be used for this deployment.'
-                sh 'heroku login && git push heroku main'  // Replace with actual Heroku deployment command
+                bat 'echo Deploying to production environment...'
+                // Add production deployment steps
             }
         }
     }
@@ -100,9 +65,9 @@ pipeline {
         always {
             echo 'Pipeline execution completed.'
             emailext(
-                subject: "Pipeline Execution Completed",
-                body: "The Jenkins pipeline has finished execution.",
-                to: "${EMAIL}"
+                to: 'disha.chawla6025@gmail.com',
+                subject: 'Jenkins Build Notification',
+                body: 'The Jenkins build has completed. Check the pipeline for details.'
             )
         }
     }
